@@ -2,7 +2,14 @@ name: Test Unitaire
 
 on:
   push:
-    branches: [keep_white_space]
+    branches:
+    - '*'
+    - '*/*'
+    
+  pull_request:
+    branches:
+    - main
+
   workflow_dispatch:
 
 jobs:
