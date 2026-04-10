@@ -5,7 +5,7 @@ on:
     branches:
     - '*'
     - '*/*'
-    
+
   pull_request:
     branches:
     - main
@@ -28,3 +28,4 @@ jobs:
       - name: Run tests
         working-directory: Keep_White_Space
         run: npm test
+        
