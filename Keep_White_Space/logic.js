@@ -1,3 +1,5 @@
+// ========== FICHIER SEPARANT LA LOGIQUE AU TEST EN DEHORS DU DOM ===========
+
 class Vec {
     constructor(x, y) {
         this.x = x;
