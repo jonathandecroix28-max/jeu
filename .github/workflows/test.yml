@@ -16,8 +16,8 @@ jobs:
         with:
           node-version: "16"
       - name: Install dependencies
-        working-directory: keep_white_space
+        working-directory: Keep_White_Space
         run: npm install
       - name: Run tests
-        working-directory: keep_white_space
+        working-directory: Keep_White_Space
         run: npm test
