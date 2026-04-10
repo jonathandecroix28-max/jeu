@@ -1,4 +1,4 @@
-require('./main.js');
+const {Vec, getTimeStr } = require('./logic.js');
 
 let failureCount = 0;
 
