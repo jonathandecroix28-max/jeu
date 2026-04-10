@@ -914,8 +914,3 @@ function touchMove(e) {
 function touchEnd() {
   player.updateTargetRadian(null);
 }
-
-export default {
-  Vec,
-  getTimeStr
-};
