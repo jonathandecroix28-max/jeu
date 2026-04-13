@@ -10,7 +10,7 @@ on:
 
 jobs:
   # ==========================================
-  # JOB 1 : TESTER LE PREMIER JEU (NPM / JS)
+  # JOB 1 : TEST DU PREMIER JEU (NPM / JS)
   # ==========================================
   test-keep-white-space:
     name: Tests Keep White Space
@@ -22,6 +22,7 @@ jobs:
         working-directory: ./Keep_White_Space
 
     steps:
+      # copie le code du repo et intalle NodeJS
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -31,7 +32,7 @@ jobs:
         run: npm ci
 
       - name: Tests Unitaires
-        # on lance le script de test unitaire défini dans le package.json du jeu
+        #lance le script de test unitaire défini dans le package.json du jeu
         run: npm run test:unit
 
       - name: Installer les navigateurs Playwright
