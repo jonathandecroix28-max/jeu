@@ -72,6 +72,9 @@ assertEqual(v11, -1);
 const v12 = new Vec(1, 2).dot(new Vec(3, 4).add(new Vec(5, 6)));
 assertEqual(v12, 28);
 
+const v13 = new Vec(1, 2).mul(3).add(new Vec(4, 5)).dot(new Vec(6, 7));
+assertEqual(v13, 122);
+
 // ========== CALCUL LE NOMBRE D'ERREURS ===========
 if (failureCount === 0) {
     console.log('All tests passed');
