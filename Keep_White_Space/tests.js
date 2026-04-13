@@ -1,5 +1,5 @@
 // ========= IMPORTE Vec et GetTimeStr DEPUIS LOGIC.JS ===========
-const { Vec, getTimeStr } = require('./logic.js');
+const { Vec, getTimeStr, } = require('./logic.js');
 
 let failureCount = 0;
 

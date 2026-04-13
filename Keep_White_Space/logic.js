@@ -28,7 +28,7 @@ class Vec {
         this.y += dy;
     }
 
-    
+
 }
 
 function getTimeStr(dt) {
@@ -40,5 +40,14 @@ function getTimeStr(dt) {
 
 module.exports = {
     Vec,
-    getTimeStr
+    GameStatus,
+    Player,
+    Enemy,
+    Enemies,
+    GameMap,
+    Position,
+    updatePlayerDirection,
+    now,
+    GAME_MAP,
+    KEY_STATUS,
 };

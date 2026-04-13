@@ -1,7 +1,8 @@
 {
   "version": "1.0.0",
   "scripts": {
-    "test:unit": "node tests.js"
+    "test:unit": "node tests.js",
+    "dev": "npx http-server -p 3630"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
