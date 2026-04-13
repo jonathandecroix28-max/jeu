@@ -57,9 +57,9 @@ const t2 = getTimeStr(-123456);
 assertEqual(t2, "-3:-4.-4");
 
 // ========== TEST UNITAIRE PERSO ===========
-const v9 = new Vec(1, 2).move(1, 1);
+const v9 = new Vec(1, 1).move(1, 1);
 assertEqual(v9.x, 2);
-assertEqual(v9.y, 3);
+assertEqual(v9.y, 2);
 
 // ========== CALCUL LE NOMBRE D'ERREURS ===========
 if (failureCount === 0) {
