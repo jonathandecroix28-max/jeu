@@ -27,6 +27,8 @@ class Vec {
         this.x += dx;
         this.y += dy;
     }
+
+    
 }
 
 function getTimeStr(dt) {
