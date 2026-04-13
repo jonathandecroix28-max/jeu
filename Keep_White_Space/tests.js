@@ -56,6 +56,11 @@ assertEqual(t1, "7:04.24");
 const t2 = getTimeStr(-123456);
 assertEqual(t2, "-3:-4.-4");
 
+// ========== TEST UNITAIRE PERSO ===========
+const v9 = new Vec(1, 2).move(1, 1);
+assertEqual(v9.x, 2);
+assertEqual(v9.y, 3);
+
 // ========== CALCUL LE NOMBRE D'ERREURS ===========
 if (failureCount === 0) {
     console.log('All tests passed');
