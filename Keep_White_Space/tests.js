@@ -70,7 +70,7 @@ const v11 = new Vec(0, 1).cross(new Vec(1, 0));
 assertEqual(v11, -1);
 
 const v12 = new Vec(1, 2).dot(new Vec(3, 4).add(new Vec(5, 6)));
-assertEqual(v12, 27);
+assertEqual(v12, 28);
 
 // ========== CALCUL LE NOMBRE D'ERREURS ===========
 if (failureCount === 0) {
