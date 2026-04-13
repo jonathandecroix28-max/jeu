@@ -18,7 +18,8 @@ jobs:
     # On indique à GitHub de lancer toutes les commandes dans ce dossier :
     defaults:
       run:
-        working-directory: ./Keep_White_Sp... # ⚠️ Remplacez par le nom exact du dossier
+        # on lui dit d'aller dans ce dossier pour faire les tests
+        working-directory: ./Keep_White_Space
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Tests Unitaires
-        # Lance par exemple mocha, jest, ou votre script tests.js
+        # on lance le script de test unitaire défini dans le package.json du jeu
         run: npm run test:unit
 
       - name: Installer les navigateurs Playwright
