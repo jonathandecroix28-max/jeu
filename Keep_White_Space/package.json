@@ -1,6 +1,10 @@
 {
+  "version": "1.0.0",
   "scripts": {
-    "test": "node tests.js"
+    "test:unit": "node tests.js"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0"
+  }
 }
