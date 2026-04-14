@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Space_Invader # ⚠️ À adapter selon le vrai nom de votre dossier
+        working-directory: ./Space_Invaders # ⚠️ À adapter selon le vrai nom de votre dossier
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
