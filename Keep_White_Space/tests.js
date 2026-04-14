@@ -1,26 +1,26 @@
-// ========= IMPORTE Vec et GetTimeStr DEPUIS LOGIC.JS ===========
-const { Vec, getTimeStr, } = require('./logic.js');
+// IMPORTE Vec et GetTimeStr DEPUIS LOGIC.JS
+const {Vec, getTimeStr} = require('./logic.js');
 
 let failureCount = 0;
 
-// ========== VERIFIE SI RESULTAT = VALEUR ATTENDUE ===========
+// VERIFIE SI RESULTAT = VALEUR ATTENDUE
 function assertEqual(actual, expected) {
-    // Cas spécial NaN : si les deux sont NaN, le test passe
-    if (Number.isNaN(expected) && Number.isNaN(actual)) {
-        console.log("Assertion passed");
-        return;
-    }
+  // Cas spécial NaN : si les deux sont NaN, le test passe
+  if (Number.isNaN(expected) && Number.isNaN(actual)) {
+    console.log('Assertion passed');
+    return;
+  }
 
-    // Cas normal : comparaison stricte
-    if (actual !== expected) {
-        console.error(`Assertion failed: expected "${expected}", but got "${actual}"`);
-        failureCount++;
-    } else {
-        console.log("Assertion passed");
-    }
+  // Cas normal : comparaison stricte
+  if (actual !== expected) {
+    console.error(`Assertion failed: expected "${expected}", but got "${actual}"`);
+    failureCount++;
+  } else {
+    console.log('Assertion passed');
+  }
 }
 
-// ========== TESTS ===========
+// TESTS
 
 const v1 = new Vec(1, 2);
 assertEqual(v1.x, 1);
@@ -51,12 +51,12 @@ const v8 = new Vec(1, 1).cross(new Vec(-42, -42));
 assertEqual(v8, 0);
 
 const t1 = getTimeStr(424242);
-assertEqual(t1, "7:04.24");
+assertEqual(t1, '7:04.24');
 
 const t2 = getTimeStr(-123456);
-assertEqual(t2, "-3:-4.-4");
+assertEqual(t2, '-3:-4.-4');
 
-// ========== TEST UNITAIRE PERSO ===========
+// TEST UNITAIRE PERS0
 const v9 = new Vec(1, 1);
 v9.move(1, 1);
 assertEqual(v9.x, 2);
@@ -76,10 +76,10 @@ const v13 = new Vec(126, 42).mul(0.5);
 assertEqual(v13.x, 63);
 assertEqual(v13.y, 21);
 
-// ========== CALCUL LE NOMBRE D'ERREURS ===========
+// CALCUL LE NOMBRE D'ERREURS
 if (failureCount === 0) {
-    console.log('All tests passed');
+  console.log('All tests passed');
 } else {
-    console.error(`Tests failed: ${failureCount}`);
-    globalThis.process.exit(1);
+  console.error(`Tests failed: ${failureCount}`);
+  globalThis.process.exit(1);
 }
