@@ -31,6 +31,10 @@ jobs:
       - name: Installation des dépendances (npm)
         run: npm ci
 
+      - name: Lint
+        #lance le script de lint défini dans le package.json du jeu
+        run: npm run lint
+
       - name: Tests Unitaires
         #lance le script de test unitaire défini dans le package.json du jeu
         run: npm run test:unit
