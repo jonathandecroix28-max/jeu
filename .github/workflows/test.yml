@@ -44,3 +44,10 @@ jobs:
 
       - name: Tests Fonctionnels
         run: npx playwright test
+
+      - name: Rapport de test personnalisé
+        run: |
+          echo "### 🚀 Résumé des tests JEUX VIDEOPS" >> $GITHUB_STEP_SUMMARY
+          echo "| Test | Résultat |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Playwright | ✅ OK |" >> $GITHUB_STEP_SUMMARY
