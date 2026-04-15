@@ -3,13 +3,12 @@
   "scripts": {
     "test:unit": "node tests.js",
     "dev": "npx http-server -p 3630",
-    "lint": "eslint . --ext .js"
+    "lint": "eslint . --ext .js",
+    "test:e2e": "cypress run"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.59.1",
-    "@types/node": "^25.6.0",
-    "eslint": "^10.2.0",
-    "eslint-config-google": "^0.14.0"
+    "cypress": "^15.13.1",
+    "eslint": "^8.0.0",
+    "http-server": "^14.0.0"
   }
 }

@@ -43,4 +43,4 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Tests Fonctionnels
-        run: npx playwright test --reporter=github
+        run: npx playwright test
