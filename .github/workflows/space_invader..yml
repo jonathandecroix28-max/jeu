@@ -107,6 +107,7 @@ jobs:
         audit-space-invader,
         lint-space-invader,
         setup-space-invader,
+        build-space-invader,
       ]
     runs-on: ubuntu-latest
     defaults:
@@ -122,6 +123,7 @@ jobs:
           echo "- Lint : ${{ needs.lint-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Tests Unitaires : ${{ needs.test-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Tests Fonctionnels : ${{ needs.test-fonctionnel-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Build : ${{ needs.build-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
           echo "Vérifiez les étapes précédentes pour les détails des résultats." >> $GITHUB_STEP_SUMMARY
 
   build-space-invader:
