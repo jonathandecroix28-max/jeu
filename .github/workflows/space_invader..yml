@@ -79,7 +79,7 @@ jobs:
           echo "Les tests unitaires ont été exécutés avec succès." >> $GITHUB_STEP_SUMMARY
   test-fonctionnel-space-invader:
     name: Tests Fonctionnels Space Invader
-    needs: test-space-invader
+    needs: [lint-space-invader, audit-space-invader]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -126,7 +126,14 @@ jobs:
 
   build-space-invader:
     name: Build Space Invader
-    needs: test-space-invader
+    needs:
+      [
+        test-space-invader,
+        test-fonctionnel-space-invader,
+        audit-space-invader,
+        lint-space-invader,
+        setup-space-invader,
+      ]
     runs-on: ubuntu-latest
     defaults:
       run:
