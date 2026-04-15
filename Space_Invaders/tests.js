@@ -12,11 +12,11 @@ function assertEqual(actual, expected, testName) {
     var actualStr = typeof actual === 'object' ? JSON.stringify(actual) : String(actual);
     var expectedStr = typeof expected === 'object' ? JSON.stringify(expected) : String(expected);
     if (actualStr !== expectedStr) {
-        console.error("::error file=tests.ts::[" + testName + "] Assertion failed: expected \"" + expectedStr + "\", but got \"" + actualStr + "\"");
+        console.error("::error file=tests.ts::[".concat(testName, "] Assertion failed: expected \"").concat(expectedStr, "\", but got \"").concat(actualStr, "\""));
         failureCount++;
     }
     else {
-        console.log("\u2705 [" + testName + "] Assertion passed");
+        console.log("\u2705 [".concat(testName, "] Assertion passed"));
     }
 }
 console.log("▶️ Lancement des tests unitaires Space Invaders");
@@ -43,6 +43,6 @@ if (failureCount === 0) {
     console.log('Tous les tests unitaires ont réussi !');
 }
 else {
-    console.error("\u274C \u00C9chec : " + failureCount + " test(s) n'ont pas pass\u00E9.");
+    console.error("\u274C \u00C9chec : ".concat(failureCount, " test(s) n'ont pas pass\u00E9."));
     globalThis.process.exit(1);
 }
