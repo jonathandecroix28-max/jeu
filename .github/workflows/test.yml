@@ -7,28 +7,63 @@ on:
     branches: [main]
 
 jobs:
-  # ==========================================
-  # JOB 2 : SPACE INVADER (TS)
-  # ==========================================
-  test-space-invader:
-    name: Tests Space Invader
+  # 1. JOB D'INSTALLATION (Prépare le terrain et le cache)
+  setup-space-invader:
+    name: Setup Space Invader
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Space_Invaders # ⚠️ À adapter selon le vrai nom de votre dossier
+        working-directory: ./Space_Invaders
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-
+          cache: "npm"
+          cache-dependency-path: "./Space_Invaders/package-lock.json"
       - name: Installation des dépendances
         run: npm ci
 
-      - name: Audit de sécurité (DevSecOps)
-        run: npm audit
+  # 2. JOB D'AUDIT
+  audit-space-invader:
+    name: Audit Space Invader
+    needs: setup-space-invader
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
+          cache-dependency-path: "./Space_Invaders/package-lock.json"
+      - name: Installation des dépendances pour l'audit
+        run: npm ci
+      - name: Audit de sécurité
+        run: npm audit --audit-level=high
 
-      - name: Tests Unitaires (Faits main)
+  # 3. JOB DE TESTS
+  test-space-invader:
+    name: Tests Space Invader
+    needs: audit-space-invader
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
+          cache-dependency-path: "./Space_Invaders/package-lock.json"
+      - name: Installation des dépendances pour l'audit
+        run: npm ci
+      - name: Lancer les tests unitaires
         run: |
-          npx tsc tests.ts
+          npx tsc tests.ts --esModuleInterop --module commonjs
           node tests.js
