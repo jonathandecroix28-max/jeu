@@ -10,7 +10,7 @@ describe('Keep White Space - E2E', () => {
     cy.get('canvas').should('exist');
   });
 
-  // Test 2 : démarrer une partie avec ESPACE ne plante pas
+  // Test 2 : démarrer une partie avec ESPACE et vérifier que le jeu est accessible
   it('démarre une partie avec la touche ESPACE et le jeu reste accessible', () => {
     cy.visit(URL);
 
@@ -21,7 +21,7 @@ describe('Keep White Space - E2E', () => {
     cy.get('canvas').should('exist');
   });
 
-  // Test 3 : passage par un Game Over puis restart (reload) ne casse pas la page
+  // Test 3 : passage par un Game Over puis restart ne casse pas la page
   it('permet de passer par un Game Over puis un restart sans casser la page', () => {
     cy.visit(URL);
 
