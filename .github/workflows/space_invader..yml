@@ -74,9 +74,16 @@ jobs:
         run: npm ci
       - name: Lancer les tests
         run: |
-          npm run tests
-          echo "### Résultats des Tests ✅" >> $GITHUB_STEP_SUMMARY
-          echo "Les tests unitaires ont été exécutés avec succès." >> $GITHUB_STEP_SUMMARY
+          if npm run tests; then
+            echo "::notice::Tests unitaires réussis"
+            echo "### Résultats des Tests ✅" >> $GITHUB_STEP_SUMMARY
+            echo "Les tests unitaires ont été exécutés avec succès." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "::error::Les tests unitaires ont échoué"
+            echo "### Résultats des Tests ❌" >> $GITHUB_STEP_SUMMARY
+            echo "Les tests unitaires ont échoué. Vérifiez les logs." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
   test-fonctionnel-space-invader:
     name: Tests Fonctionnels Space Invader
     needs: [lint-space-invader, audit-space-invader]
@@ -96,10 +103,22 @@ jobs:
         run: |
           echo "### Tests Fonctionnels 🧪" >> $GITHUB_STEP_SUMMARY
           echo "Les tests fonctionnels sont en cours d'exécution..." >> $GITHUB_STEP_SUMMARY
-          # Ici, vous pouvez ajouter des commandes pour exécuter vos tests fonctionnels
-          echo "Tests fonctionnels terminés." >> $GITHUB_STEP_SUMMARY
+          if npm run | grep -qE "^\s+test:functional"; then
+            if npm run test:functional; then
+              echo "::notice::Tests fonctionnels réussis"
+              echo "Tests fonctionnels terminés avec succès." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "::error::Les tests fonctionnels ont échoué"
+              echo "Tests fonctionnels en échec. Vérifiez les logs." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          else
+            echo "::warning::Aucun script npm 'test:functional' trouvé dans package.json"
+            echo "Aucun script 'test:functional' configuré (job non bloquant)." >> $GITHUB_STEP_SUMMARY
+          fi
   resume-tests-space-invader:
     name: Résumé des Tests Space Invader
+    if: always()
     needs:
       [
         test-space-invader,

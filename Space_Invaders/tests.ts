@@ -68,8 +68,10 @@ assertEqual(dot({ x: 1, y: 0 }, { x: 0, y: 1 }), 0, "dot_perpendicular");
 
 
 if (failureCount === 0) {
+    console.log('::notice::Tous les tests unitaires ont réussi');
     console.log('Tous les tests unitaires ont réussi !');
 } else {
+    console.error(`::error file=tests.ts::Échec global: ${failureCount} test(s) n'ont pas passé.`);
     console.error(`❌ Échec : ${failureCount} test(s) n'ont pas passé.`);
     globalThis.process.exit(1);
 }
