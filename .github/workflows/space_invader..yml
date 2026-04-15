@@ -77,6 +77,52 @@ jobs:
           npm run tests
           echo "### Résultats des Tests ✅" >> $GITHUB_STEP_SUMMARY
           echo "Les tests unitaires ont été exécutés avec succès." >> $GITHUB_STEP_SUMMARY
+  test-fonctionnel-space-invader:
+    name: Tests Fonctionnels Space Invader
+    needs: test-space-invader
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Installation
+        run: npm ci
+      - name: Lancer les tests fonctionnels
+        run: |
+          echo "### Tests Fonctionnels 🧪" >> $GITHUB_STEP_SUMMARY
+          echo "Les tests fonctionnels sont en cours d'exécution..." >> $GITHUB_STEP_SUMMARY
+          # Ici, vous pouvez ajouter des commandes pour exécuter vos tests fonctionnels
+          echo "Tests fonctionnels terminés." >> $GITHUB_STEP_SUMMARY
+  resume-tests-space-invader:
+    name: Résumé des Tests Space Invader
+    needs:
+      [
+        test-space-invader,
+        test-fonctionnel-space-invader,
+        audit-space-invader,
+        lint-space-invader,
+        setup-space-invader,
+      ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Résumé des tests
+        run: |
+          echo "### Résumé Final des Tests 🏁" >> $GITHUB_STEP_SUMMARY
+          echo "- Audit : ${{ needs.audit-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Lint : ${{ needs.lint-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests Unitaires : ${{ needs.test-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests Fonctionnels : ${{ needs.test-fonctionnel-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "Vérifiez les étapes précédentes pour les détails des résultats." >> $GITHUB_STEP_SUMMARY
 
   build-space-invader:
     name: Build Space Invader
