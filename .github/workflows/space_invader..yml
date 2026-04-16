@@ -146,31 +146,40 @@ jobs:
           echo "Vérifiez les étapes précédentes pour les détails des résultats." >> $GITHUB_STEP_SUMMARY
 
   build-space-invader:
-    name: Build Space Invader
-    needs:
-      [
-        test-space-invader,
-        test-fonctionnel-space-invader,
-        audit-space-invader,
-        lint-space-invader,
-        setup-space-invader,
-      ]
+    name: Build & Push Docker Image
+    needs: [test-space-invader] # On attend que les tests passent
+    if: github.event_name != 'pull_request'
+    environment: "jeuVideops Docker"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Space_Invaders
+    env:
+      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
-      - name: Installation et Build
+
+      - name: Vérification des secrets Docker
         run: |
-          npm ci
-          npm run build
-      - name: Résumé du Build
-        run: echo "### Build Terminé 🚀" >> $GITHUB_STEP_SUMMARY
+          if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+            echo "::error::Variables manquantes: vars.DOCKER_USERNAME et/ou secrets.DOCKER_PASSWORD"
+            exit 1
+          fi
+
+      - name: Connexion au registre
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build de l'image 🐳
+        run: |
+          docker build -t "$DOCKER_USERNAME"/space-invaders:latest ./Space_Invaders
+
+      - name: Push de l'image 🚀
+        run: |
+          docker push "$DOCKER_USERNAME"/space-invaders:latest
 
   deploy-space-invader:
     name: Déploiement GitHub Pages
     needs: build-space-invader
+    if: github.event_name != 'pull_request'
+    environment: "jeuVideops Docker"
     runs-on: ubuntu-latest
     permissions:
       contents: write
