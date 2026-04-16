@@ -5,8 +5,7 @@ module.exports = [
   // uniquement ignores
   {
     ignores: [
-      'playwright.config.js',
-      'tests/**',
+      'tests/**'
     ],
   },
 

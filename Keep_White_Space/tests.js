@@ -13,7 +13,7 @@ function assertEqual(actual, expected) {
 
   // Cas normal : comparaison stricte
   if (actual !== expected) {
-    console.error(`Assertion failed: expected "${expected}", but got "${actual}"`);
+    console.error("::error file=tests.js::Assertion failed: expected " + expected + ", got " + actual);
     failureCount++;
   } else {
     console.log('Assertion passed');
@@ -78,8 +78,8 @@ assertEqual(v13.y, 21);
 
 // CALCUL LE NOMBRE D'ERREURS
 if (failureCount === 0) {
-  console.log('All tests passed');
+  console.log('::notice::All tests passed');
 } else {
-  console.error(`Tests failed: ${failureCount}`);
+  console.error(`::error file=tests.js::Tests failed: ${failureCount}`);
   globalThis.process.exit(1);
 }
