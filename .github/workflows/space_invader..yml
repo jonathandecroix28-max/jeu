@@ -171,8 +171,9 @@ jobs:
   deploy-space-invader:
     name: Déploiement GitHub Pages
     needs: build-space-invader
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Installation et Build
