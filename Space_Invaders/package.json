@@ -4,7 +4,8 @@
     "build": "rm -rf build && parcel build src/index.html -d build --public-url ./ --no-source-maps",
     "zip": "rm -f bundle.zip && cd build && bestzip ../bundle.zip *",
     "bundle": "yarn build && yarn zip",
-    "tests": "npx tsc tests.ts --esModuleInterop --module commonjs && node tests.js",
+    "tests": "npx tsc tests.ts --esModuleInterop --module commonjs --skipLibCheck && node tests.js",
+    "test:functional": "npx tsc tests-fonctionnels.ts --esModuleInterop --module commonjs --target es2022 --skipLibCheck && node tests-fonctionnels.js",
     "lint": "npx eslint ."
   },
   "devDependencies": {
@@ -12,6 +13,7 @@
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",
     "bestzip": "^2.2.0",
+    "cypress": "^15.13.1",
     "eslint-config-google": "^0.14.0",
     "parcel-bundler": "^1.12.5",
     "sass": "^1.39.0",
