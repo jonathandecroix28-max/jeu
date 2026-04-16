@@ -1,0 +1,62 @@
+name: Tests Monorepo (Unitaires & Fonctionnels)
+
+on:
+  push:
+    branches:
+      - "*"
+      - "*/*"
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-keep-white-space:
+    name: Tests Keep White Space
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Installation des dépendances (npm)
+        run: npm ci
+
+      - name: Audit de sécurité des dépendances
+        run: |
+          echo "## Résumé audit de sécurité Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm audit
+          echo "::notice title=Audit de sécurité::Audit des dépendances terminé avec succès"
+
+      - name: Lint
+        run: |
+          echo "## Résumé lint Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm run lint
+          echo "::notice title=Lint JS::Lint Keep White Space terminé avec succès"
+
+      - name: Tests Unitaires
+        run: |
+          echo "## Résumé tests unitaires Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm run test:unit
+          echo "::notice title=Tests Unitaires::Tests unitaires Keep White Space terminés avec succès"
+
+      - name: Tests E2E
+        run: |
+          echo "## Résumé tests E2E Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm run test:e2e
+          echo "::notice title=Tests E2E::Tests E2E Keep White Space terminés avec succès"
+
+      - name: Résumé global Keep White Space
+        if: always()
+        run: |
+          {
+            echo "## Bilan global Keep White Space"
+            echo ""
+            echo "- Audit de sécurité : terminé (voir step correspondant pour le détail)"
+            echo "- Lint JS : terminé (voir step correspondant pour le détail)"
+            echo "- Tests unitaires : terminés (voir step correspondant pour le détail)"
+            echo "- Tests E2E : terminés (voir step correspondant pour le détail)"
+          } >> $GITHUB_STEP_SUMMARY
