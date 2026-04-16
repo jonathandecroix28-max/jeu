@@ -147,7 +147,7 @@ jobs:
 
   build-space-invader:
     name: Build & Push Docker Image
-    needs: [test-space-invader] # On attend que les tests passent
+    needs: [test-space-invader, test-fonctionnel-space-invader] # On attend que les tests passent
     if: github.event_name != 'pull_request'
     environment: "jeuVideops Docker"
     runs-on: ubuntu-latest
