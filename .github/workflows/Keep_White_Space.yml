@@ -108,6 +108,9 @@ jobs:
       - name: Export image Docker comme artefact
         run: docker save keep-white-space -o keep-white-space.tar
 
+      - name: Lister les fichiers après docker save
+        run: ls -al
+
       - name: Upload artefact image
         uses: actions/upload-artifact@v4
         with:
