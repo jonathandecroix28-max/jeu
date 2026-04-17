@@ -62,7 +62,7 @@ jobs:
         run: npm ci
       - name: Audit de sécurité
         run: |
-          npm audit --audit-level=high
+          npm audit --audit-level=high && echo "::notice::Audit de sécurité réussi" || (echo "::error::Audit de sécurité échoué" && exit 1)
           echo "### Rapport d'Audit 🛡️" >> $GITHUB_STEP_SUMMARY
           echo "Audit terminé. Vérifiez les logs pour les détails." >> $GITHUB_STEP_SUMMARY
 
