@@ -152,7 +152,7 @@ jobs:
     environment: "github-pages"
     runs-on: ubuntu-latest
     env:
-      DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
@@ -160,7 +160,7 @@ jobs:
       - name: Vérification des secrets Docker
         run: |
           if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
-            echo "::error title=Configuration Docker manquante,file=.github/workflows/space_invader..yml,line=1::Ajoute vars.DOCKER_USERNAME et secrets.DOCKER_PASSWORD dans l'environment 'github-pages'."
+            echo "::error title=Configuration Docker manquante,file=.github/workflows/space_invader..yml,line=1::Ajoute secrets.DOCKER_USERNAME et secrets.DOCKER_PASSWORD dans l'environment 'github-pages'."
             exit 1
           fi
           echo "::notice title=Configuration Docker::Variables Docker détectées."
@@ -181,7 +181,7 @@ jobs:
           DOCKER_PASSWORD_CLEAN="$(printf '%s' "$DOCKER_PASSWORD" | tr -d '\r\n')"
           echo "::notice title=Diagnostic credentials::username_length=${#DOCKER_USERNAME_CLEAN}, token_length=${#DOCKER_PASSWORD_CLEAN}"
           if ! printf '%s' "$DOCKER_PASSWORD_CLEAN" | docker login -u "$DOCKER_USERNAME_CLEAN" --password-stdin; then
-            echo "::error title=Échec authentification Docker Hub,file=.github/workflows/space_invader..yml,line=1::Vérifie vars.DOCKER_USERNAME et remplace secrets.DOCKER_PASSWORD par un Access Token Docker Hub valide."
+            echo "::error title=Échec authentification Docker Hub,file=.github/workflows/space_invader..yml,line=1::Vérifie secrets.DOCKER_USERNAME et remplace secrets.DOCKER_PASSWORD par un Access Token Docker Hub valide."
             exit 1
           fi
 
