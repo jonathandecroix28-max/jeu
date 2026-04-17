@@ -109,13 +109,14 @@ jobs:
         run: docker save keep-white-space -o keep-white-space.tar
 
       - name: Lister les fichiers après docker save
+        working-directory: ./Keep_White_Space
         run: ls -al
 
       - name: Upload artefact image
         uses: actions/upload-artifact@v4
         with:
           name: keep-white-space-image
-          path: keep-white-space.tar
+          path: Keep_White_Space/keep-white-space.tar
 
   deploy-keep-white-space:
     name: Déploiement Keep White Space
