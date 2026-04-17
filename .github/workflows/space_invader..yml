@@ -192,26 +192,3 @@ jobs:
       - name: Push de l'image 🚀
         run: |
           docker push "$DOCKER_USERNAME"/space-invaders:latest
-
-  deploy-space-invader:
-    name: Déploiement GitHub Pages
-    needs: build-space-invader
-    if: github.event_name != 'pull_request' && needs.build-space-invader.result == 'success'
-    environment: "github-pages"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Installation et Build
-        run: |
-          cd Space_Invaders
-          npm ci
-          npm run build
-      - name: Déploiement 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: Space_Invaders/build
-          branch: gh-pages
-          commit-message: "deploy(game): ${{ github.sha }} after docker build/push"
-          token: ${{ secrets.GITHUB_TOKEN }}

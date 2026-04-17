@@ -1,5 +1,4 @@
 const checkbox = document.getElementById("acceptTerms");
-const playButton = document.getElementById("playButton");
 const modal = document.getElementById("terms-modal");
 const openModal = document.getElementById("openModal");
 const closeModal = document.getElementById("closeModal");
@@ -34,11 +33,6 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-// Bouton jouer
-playButton.addEventListener("click", () => {
-  alert("Félicitations ! Vous avez accepté des conditions irréversibles.");
-});
-
 gamePlayButtons.forEach((button) => {
   button.addEventListener("click", () => {
     if (!checkbox.checked) {
@@ -50,8 +44,8 @@ gamePlayButtons.forEach((button) => {
 
     const gameNumber = button.dataset.game;
     const gameRoutes = {
-      "1": "./Keep_White_Space/index.html",
-      "2": "./Space_Invaders/src/index.html"
+      "1": "./keep-white-space/index.html",
+      "2": "./space-invaders/index.html"
     };
 
     const targetRoute = gameRoutes[gameNumber];
