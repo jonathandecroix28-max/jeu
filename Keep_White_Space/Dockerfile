@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY . .
 
-RUN npm install --only=production
+RUN npm install
 
 EXPOSE 3630
 
