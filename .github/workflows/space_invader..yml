@@ -2,7 +2,7 @@ name: Tests Monorepo (Unitaires & Fonctionnels)
 
 on:
   push:
-    branches: ["*"]
+    branches: ["**"]
   pull_request:
     branches: [main]
   workflow_dispatch:
