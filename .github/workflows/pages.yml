@@ -1,4 +1,4 @@
-name: Déploiement Plateforme Jeux
+name: Deploiement Plateforme Jeux
 
 on:
     push:
@@ -9,38 +9,96 @@ on:
     workflow_dispatch:
 
 jobs:
-    deploy-pages:
-        name: Build & Déploiement GitHub Pages
+    artifact-keep-white-space:
+        name: Artifact Keep White Space
         runs-on: ubuntu-latest
-        if: github.event_name != 'pull_request'
-        permissions:
-            contents: write
-
         steps:
             - uses: actions/checkout@v4
+            - name: Prepare Keep White Space artifact
+              run: |
+                  rm -rf out
+                  mkdir -p out/keep-white-space
+                  cp Keep_White_Space/index.html Keep_White_Space/main.js Keep_White_Space/logic.js out/keep-white-space/
+            - name: Upload Keep White Space artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: keep-white-space-static
+                  path: out/keep-white-space
 
+    artifact-space-invaders:
+        name: Artifact Space Invaders
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
                   node-version: "lts/*"
-
             - name: Build Space Invaders
               working-directory: ./Space_Invaders
               run: |
                   npm ci
                   npm run build
-
-            - name: Préparer le site
+            - name: Prepare Space Invaders artifact
               run: |
-                  rm -rf site
-                  mkdir -p site/keep-white-space site/space-invaders
-                  cp index.html style.css script.js site/
-                  cp Keep_White_Space/index.html Keep_White_Space/main.js Keep_White_Space/logic.js site/keep-white-space/
-                  cp -R Space_Invaders/build/* site/space-invaders/
+                  rm -rf out
+                  mkdir -p out/space-invaders
+                  cp -R Space_Invaders/build/* out/space-invaders/
+            - name: Upload Space Invaders artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: space-invaders-static
+                  path: out/space-invaders
 
-            - name: Déploiement GitHub Pages
+    deploy-pages:
+        name: Deploy GitHub Pages
+        runs-on: ubuntu-latest
+        if: github.event_name != 'pull_request'
+        needs: [artifact-keep-white-space, artifact-space-invaders]
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+            - name: Download Keep White Space artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: keep-white-space-static
+                  path: site/keep-white-space
+            - name: Download Space Invaders artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: space-invaders-static
+                  path: site/space-invaders
+            - name: Prepare hub
+              run: |
+                  cp index.html style.css script.js site/
+            - name: Deploy GitHub Pages
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                   folder: site
                   branch: gh-pages
                   commit-message: "deploy(platform): ${{ github.sha }}"
                   token: ${{ secrets.GITHUB_TOKEN }}
+
+    push-hub-dockerhub:
+        name: Push Hub image to Docker Hub
+        runs-on: ubuntu-latest
+        environment: "github-pages"
+        if: github.event_name != 'pull_request'
+        needs: [artifact-keep-white-space, artifact-space-invaders]
+        env:
+            DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v4
+            - name: Verify Docker secrets
+              run: |
+                  if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+                    echo "::error::Missing Docker secrets (DOCKER_USERNAME / DOCKER_PASSWORD)"
+                    exit 1
+                  fi
+            - name: Login Docker Hub
+              run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            - name: Build Hub image
+              run: docker build -t "$DOCKER_USERNAME"/jeux-videops-hub:latest .
+            - name: Push Hub image
+              run: docker push "$DOCKER_USERNAME"/jeux-videops-hub:latest

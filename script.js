@@ -8,10 +8,7 @@ const gamePlayButtons = document.querySelectorAll(".game-play-button");
 modal.style.display = "none";
 modal.setAttribute("aria-hidden", "true");
 
-// Active / désactive le bouton jouer
-checkbox.addEventListener("change", () => {
-  playButton.disabled = !checkbox.checked;
-});
+// Le consentement est vérifié au clic sur chaque bouton de jeu
 
 // Ouvrir modal
 openModal.addEventListener("click", () => {
