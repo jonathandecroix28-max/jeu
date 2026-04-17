@@ -149,7 +149,7 @@ jobs:
     name: Build & Push Docker Image
     needs: [test-space-invader, test-fonctionnel-space-invader] # On attend que les tests passent
     if: github.event_name != 'pull_request'
-    environment: "jeuVideops Docker"
+    environment: "github-pages"
     runs-on: ubuntu-latest
     env:
       DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
@@ -160,7 +160,7 @@ jobs:
       - name: Vérification des secrets Docker
         run: |
           if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
-            echo "::error title=Configuration Docker manquante,file=.github/workflows/space_invader..yml,line=1::Ajoute vars.DOCKER_USERNAME et secrets.DOCKER_PASSWORD dans l'environment 'jeuVideops Docker'."
+            echo "::error title=Configuration Docker manquante,file=.github/workflows/space_invader..yml,line=1::Ajoute vars.DOCKER_USERNAME et secrets.DOCKER_PASSWORD dans l'environment 'github-pages'."
             exit 1
           fi
           echo "::notice title=Configuration Docker::Variables Docker détectées."
@@ -197,7 +197,7 @@ jobs:
     name: Déploiement GitHub Pages
     needs: build-space-invader
     if: github.event_name != 'pull_request'
-    environment: "jeuVideops Docker"
+    environment: "github-pages"
     runs-on: ubuntu-latest
     permissions:
       contents: write
