@@ -147,7 +147,8 @@ jobs:
 
   build-space-invader:
     name: Build & Push Docker Image
-    needs: [test-space-invader, test-fonctionnel-space-invader] # On attend que les tests passent
+    needs: [test-space-invader, test-fonctionnel-space-invader
+    ] # On attend que les tests passent
     if: github.event_name != 'pull_request'
     environment: "jeuVideops Docker"
     runs-on: ubuntu-latest
@@ -163,6 +164,16 @@ jobs:
             echo "::error::Variables manquantes: vars.DOCKER_USERNAME et/ou secrets.DOCKER_PASSWORD"
             exit 1
           fi
+
+      - name: Diagnostic Docker (sans secret)
+        run: |
+          echo "Docker user détecté: $DOCKER_USERNAME"
+          if [ -n "$DOCKER_PASSWORD" ]; then
+            echo "Docker password détecté: OUI"
+          else
+            echo "Docker password détecté: NON"
+          fi
+          docker --version
 
       - name: Connexion au registre
         run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
