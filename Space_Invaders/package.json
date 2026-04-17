@@ -21,9 +21,14 @@
   },
   "overrides": {
     "braces": "^3.0.3",
+    "elliptic": "^6.6.1",
+    "form-data": "^2.5.4",
     "micromatch": "^4.0.8",
     "node-forge": "^1.3.0",
+    "nth-check": "^2.1.1",
     "postcss": "^8.4.31",
+    "qs": "^6.14.1",
+    "tough-cookie": "^4.1.3",
     "terser": "^4.8.1"
   }
 }
