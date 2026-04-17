@@ -80,6 +80,11 @@ jobs:
           npm run test:unit
           echo "::notice title=Tests Unitaires::Tests unitaires Keep White Space terminés avec succès"
 
+      - name: Lancer le serveur de test
+        run: |
+          npx http-server -p 3630 -c-1 . &
+          npx wait-on http://localhost:3630
+
       - name: Tests E2E
         run: |
           echo "## Résumé tests E2E Keep White Space" >> $GITHUB_STEP_SUMMARY
