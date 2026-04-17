@@ -196,7 +196,7 @@ jobs:
   deploy-space-invader:
     name: Déploiement GitHub Pages
     needs: build-space-invader
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && needs.build-space-invader.result == 'success'
     environment: "github-pages"
     runs-on: ubuntu-latest
     permissions:
@@ -213,4 +213,5 @@ jobs:
         with:
           folder: Space_Invaders/build
           branch: gh-pages
+          commit-message: "deploy(game): ${GITHUB_SHA} after docker build/push"
           token: ${{ secrets.GITHUB_TOKEN }}
