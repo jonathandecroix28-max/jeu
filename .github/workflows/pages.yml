@@ -70,7 +70,7 @@ jobs:
                   path: site/space-invaders
             - name: Prepare hub
               run: |
-                  cp index.html style.css script.js site/
+                  cp front/index.html front/style.css front/script.js site/
             - name: Deploy GitHub Pages
               uses: JamesIves/github-pages-deploy-action@v4
               with:
@@ -99,6 +99,6 @@ jobs:
             - name: Login Docker Hub
               run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             - name: Build Hub image
-              run: docker build -t "$DOCKER_USERNAME"/jeux-videops-hub:latest .
+              run: docker build -t "$DOCKER_USERNAME"/jeux-videops-hub:latest ./front
             - name: Push Hub image
               run: docker push "$DOCKER_USERNAME"/jeux-videops-hub:latest
