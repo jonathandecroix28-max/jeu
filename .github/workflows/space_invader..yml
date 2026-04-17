@@ -213,5 +213,5 @@ jobs:
         with:
           folder: Space_Invaders/build
           branch: gh-pages
-          commit-message: "deploy(game): ${GITHUB_SHA} after docker build/push"
+          commit-message: "deploy(game): ${{ github.sha }} after docker build/push"
           token: ${{ secrets.GITHUB_TOKEN }}
