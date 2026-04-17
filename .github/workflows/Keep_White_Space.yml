@@ -7,6 +7,7 @@ on:
       - "*/*"
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   installation-dependances:
@@ -117,6 +118,37 @@ jobs:
         with:
           name: keep-white-space-image
           path: Keep_White_Space/keep-white-space.tar
+
+  push-image-dockerhub:
+    name: Push image Keep White Space sur Docker Hub
+    runs-on: ubuntu-latest
+    needs: tests
+    if: github.event_name != 'pull_request'
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérification des secrets Docker
+        run: |
+          if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+            echo "::error::Secrets Docker manquants (DOCKER_USERNAME / DOCKER_PASSWORD)"
+            exit 1
+          fi
+
+      - name: Connexion Docker Hub
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build image Docker Keep White Space
+        run: docker build -t "$DOCKER_USERNAME"/keep-white-space:latest .
+
+      - name: Push image Docker Keep White Space
+        run: docker push "$DOCKER_USERNAME"/keep-white-space:latest
 
   deploy-keep-white-space:
     name: Déploiement Keep White Space
