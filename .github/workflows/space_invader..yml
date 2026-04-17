@@ -34,9 +34,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Installation
+        run: npm ci
       - name: Linting du code
         run: |
-          npx eslint src/ts || echo "::warning::Des erreurs de style ont été détectées"
+          npx eslint src/ts
           echo "### Rapport de Linting 🎨" >> $GITHUB_STEP_SUMMARY
           echo "L'analyse du code est terminée." >> $GITHUB_STEP_SUMMARY
 
@@ -44,16 +49,20 @@ jobs:
     name: Audit Space Invader
     needs: setup-space-invader
     runs-on: ubuntu-latest
-    continue-on-error: true
     defaults:
       run:
         working-directory: ./Space_Invaders
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Installation
+        run: npm ci
       - name: Audit de sécurité
         run: |
-          npm audit --audit-level=high || echo "::warning::Des vulnérabilités critiques existent dans Parcel"
+          npm audit --audit-level=high
           echo "### Rapport d'Audit 🛡️" >> $GITHUB_STEP_SUMMARY
           echo "Audit terminé. Vérifiez les logs pour les détails." >> $GITHUB_STEP_SUMMARY
 

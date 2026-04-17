@@ -9,9 +9,56 @@ on:
     workflow_dispatch:
 
 jobs:
+    validate-keep-white-space:
+        name: Validate Keep White Space
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./Keep_White_Space
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "lts/*"
+            - name: Install dependencies
+              run: npm ci
+            - name: Lint
+              run: npm run lint
+            - name: Unit tests
+              run: npm run test:unit
+            - name: Start test server
+              run: |
+                  npx http-server -p 3630 -c-1 . &
+                  npx wait-on http://localhost:3630
+            - name: E2E tests
+              run: npm run test:e2e
+
+    validate-space-invaders:
+        name: Validate Space Invaders
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./Space_Invaders
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "lts/*"
+            - name: Install dependencies
+              run: npm ci
+            - name: Lint
+              run: npm run lint
+            - name: Security audit
+              run: npm audit --audit-level=high
+            - name: Unit tests
+              run: npm run tests
+            - name: Functional tests
+              run: npm run test:functional
+
     artifact-keep-white-space:
         name: Artifact Keep White Space
         runs-on: ubuntu-latest
+        needs: [validate-keep-white-space]
         steps:
             - uses: actions/checkout@v4
             - name: Prepare Keep White Space artifact
@@ -28,6 +75,7 @@ jobs:
     artifact-space-invaders:
         name: Artifact Space Invaders
         runs-on: ubuntu-latest
+        needs: [validate-space-invaders]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
