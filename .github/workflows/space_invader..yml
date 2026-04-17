@@ -161,9 +161,10 @@ jobs:
       - name: Vérification des secrets Docker
         run: |
           if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
-            echo "::error::Variables manquantes: vars.DOCKER_USERNAME et/ou secrets.DOCKER_PASSWORD"
+            echo "::error title=Configuration Docker manquante,file=.github/workflows/space_invader..yml,line=1::Ajoute vars.DOCKER_USERNAME et secrets.DOCKER_PASSWORD dans l'environment 'jeuVideops Docker'."
             exit 1
           fi
+          echo "::notice title=Configuration Docker::Variables Docker détectées."
 
       - name: Diagnostic Docker (sans secret)
         run: |
@@ -176,7 +177,11 @@ jobs:
           docker --version
 
       - name: Connexion au registre
-        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        run: |
+          if ! echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; then
+            echo "::error title=Échec authentification Docker Hub,file=.github/workflows/space_invader..yml,line=1::Vérifie vars.DOCKER_USERNAME et remplace secrets.DOCKER_PASSWORD par un Access Token Docker Hub valide."
+            exit 1
+          fi
 
       - name: Build de l'image 🐳
         run: |
