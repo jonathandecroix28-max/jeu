@@ -3,7 +3,7 @@
   "scripts": {
     "test:unit": "node tests.js",
     "dev": "npx http-server -p 3630",
-    "lint": "eslint . --ext .js",
+    "lint": "eslint .",
     "test:e2e": "cypress run"
   },
   "devDependencies": {
