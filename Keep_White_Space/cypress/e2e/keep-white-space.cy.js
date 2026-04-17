@@ -14,7 +14,7 @@ describe('Keep White Space - E2E', () => {
   it('démarre une partie avec la touche ESPACE et le jeu reste accessible', () => {
     cy.visit(URL);
 
-    cy.get('body').trigger('keydown', { key: ' ' });
+    cy.get('body').trigger('keydown', {key: ' '});
 
     cy.wait(2000);
 
@@ -25,11 +25,11 @@ describe('Keep White Space - E2E', () => {
   it('permet de passer par un Game Over puis un restart sans casser la page', () => {
     cy.visit(URL);
 
-    cy.get('body').trigger('keydown', { key: ' ' });
+    cy.get('body').trigger('keydown', {key: ' '});
 
     cy.wait(10000);
 
-    cy.get('body').trigger('keydown', { key: ' ' });
+    cy.get('body').trigger('keydown', {key: ' '});
 
     cy.location('href').should('include', URL);
     cy.get('canvas').should('exist');

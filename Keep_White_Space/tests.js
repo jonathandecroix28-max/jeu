@@ -13,7 +13,7 @@ function assertEqual(actual, expected) {
 
   // Cas normal : comparaison stricte
   if (actual !== expected) {
-    console.error("::error file=tests.js::Assertion failed: expected " + expected + ", got " + actual);
+    console.error('::error file=tests.js::Assertion failed: expected ' + expected + ', got ' + actual);
     failureCount++;
   } else {
     console.log('Assertion passed');
