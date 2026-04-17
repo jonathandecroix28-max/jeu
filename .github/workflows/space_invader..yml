@@ -147,8 +147,7 @@ jobs:
 
   build-space-invader:
     name: Build & Push Docker Image
-    needs: [test-space-invader, test-fonctionnel-space-invader
-    ] # On attend que les tests passent
+    needs: [test-space-invader, test-fonctionnel-space-invader] # On attend que les tests passent
     if: github.event_name != 'pull_request'
     environment: "jeuVideops Docker"
     runs-on: ubuntu-latest
@@ -178,7 +177,10 @@ jobs:
 
       - name: Connexion au registre
         run: |
-          if ! echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; then
+          DOCKER_USERNAME_CLEAN="$(printf '%s' "$DOCKER_USERNAME" | tr -d '\r\n')"
+          DOCKER_PASSWORD_CLEAN="$(printf '%s' "$DOCKER_PASSWORD" | tr -d '\r\n')"
+          echo "::notice title=Diagnostic credentials::username_length=${#DOCKER_USERNAME_CLEAN}, token_length=${#DOCKER_PASSWORD_CLEAN}"
+          if ! printf '%s' "$DOCKER_PASSWORD_CLEAN" | docker login -u "$DOCKER_USERNAME_CLEAN" --password-stdin; then
             echo "::error title=Échec authentification Docker Hub,file=.github/workflows/space_invader..yml,line=1::Vérifie vars.DOCKER_USERNAME et remplace secrets.DOCKER_PASSWORD par un Access Token Docker Hub valide."
             exit 1
           fi
