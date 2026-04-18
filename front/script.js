@@ -4,29 +4,40 @@ const openModal = document.getElementById("openModal");
 const closeModal = document.getElementById("closeModal");
 const gamePlayButtons = document.querySelectorAll(".game-play-button");
 
+function openTermsModal() {
+  modal.style.display = "block";
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeTermsModal() {
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+}
+
 // Etat initial: les conditions sont fermees.
-modal.style.display = "none";
-modal.setAttribute("aria-hidden", "true");
+closeTermsModal();
 
 // Le consentement est vérifié au clic sur chaque bouton de jeu
 
-// Ouvrir modal
+// Le bouton "Voir les conditions" ouvre/ferme la modale
 openModal.addEventListener("click", () => {
-  modal.style.display = "block";
-  modal.setAttribute("aria-hidden", "false");
+  if (modal.style.display === "block") {
+    closeTermsModal();
+    return;
+  }
+
+  openTermsModal();
 });
 
 // Fermer modal
 closeModal.addEventListener("click", () => {
-  modal.style.display = "none";
-  modal.setAttribute("aria-hidden", "true");
+  closeTermsModal();
 });
 
 // Fermer avec la touche Echap
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && modal.style.display === "block") {
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
+    closeTermsModal();
   }
 });
 
@@ -34,8 +45,7 @@ gamePlayButtons.forEach((button) => {
   button.addEventListener("click", () => {
     if (!checkbox.checked) {
       alert("Tu dois accepter les conditions avant de lancer un jeu.");
-      modal.style.display = "block";
-      modal.setAttribute("aria-hidden", "false");
+      openTermsModal();
       return;
     }
 
