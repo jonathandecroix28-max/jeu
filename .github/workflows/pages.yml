@@ -119,6 +119,9 @@ jobs:
             - name: Prepare hub
               run: |
                   cp front/index.html front/style.css front/script.js site/
+                  if [ -d front/img ]; then
+                    cp -R front/img site/img
+                  fi
             - name: Deploy GitHub Pages
               uses: JamesIves/github-pages-deploy-action@v4
               with:
