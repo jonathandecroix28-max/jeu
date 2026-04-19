@@ -50,6 +50,15 @@
 - La CD ne s’exécute qu’après le succès des jobs CI.
 - Les échecs des contrôles spécifiques à chaque dossier bloquent le merge et la release.
 
+## technologies utilisées
+
+- **GitHub Actions** pour l’orchestration des pipelines CI/CD.
+- **ESLint** pour le linting du code JavaScript et TypeScript.
+- Github Pages pour le déploiement du frontend statique.
+- Docker pour la construction d’images de conteneurs.
+- Docker Hub pour la publication des images de conteneurs.
+- GItbub Secrets pour la gestion sécurisée.
+
 
 ## Liens 
 - [CI/CD GitHub Actions](https://docs.github.com/en/actions)
