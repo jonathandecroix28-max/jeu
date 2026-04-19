@@ -6,6 +6,10 @@
 - Valider les modules de jeu JavaScript et TypeScript avec linting et tests.
 - Maintenir des pipelines reproductibles par dossier.
 
+## Lien
+
+[Jeux Videops](https://jonathandecroix28-max.github.io/jeu/)
+
 ## Projets gérés par la CI
 
 ### Keep_White_Space
@@ -45,3 +49,14 @@
 - Tous les jobs de lint et de tests doivent réussir.
 - La CD ne s’exécute qu’après le succès des jobs CI.
 - Les échecs des contrôles spécifiques à chaque dossier bloquent le merge et la release.
+
+
+## Liens 
+- [CI/CD GitHub Actions](https://docs.github.com/en/actions)
+- [Linting avec ESLint](https://eslint.org/)
+
+
+## Autheurs 
+
+- Jonathan
+- Cyprien
