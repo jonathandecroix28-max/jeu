@@ -1,4 +1,4 @@
-name: Tests Monorepo (Unitaires & Fonctionnels)
+name: Tests Keep White Space
 
 on:
   push:
@@ -90,6 +90,33 @@ jobs:
           echo "## Résumé tests E2E Keep White Space" >> $GITHUB_STEP_SUMMARY
           npm run test:e2e
           echo "::notice title=Tests E2E::Tests E2E Keep White Space terminés avec succès"
+
+  upload-image:
+    name: Build et upload de l'image Docker
+    runs-on: ubuntu-latest
+    needs: tests
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image Docker Keep White Space
+        run: docker build -t keep-white-space .
+
+      - name: Export image Docker comme artefact
+        run: docker save keep-white-space -o keep-white-space.tar
+
+      - name: Lister les fichiers après docker save
+        working-directory: ./Keep_White_Space
+        run: ls -al
+
+      - name: Upload artefact image
+        uses: actions/upload-artifact@v4
+        with:
+          name: keep-white-space-image
+          path: Keep_White_Space/keep-white-space.tar
 
   push-image-dockerhub:
     name: Push image Keep White Space sur Docker Hub
