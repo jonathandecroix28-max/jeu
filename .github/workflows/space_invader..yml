@@ -1,0 +1,203 @@
+name: Tests Space Invaders
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  setup-space-invader:
+    name: Setup Space Invader
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
+          cache-dependency-path: "./Space_Invaders/package-lock.json"
+      - name: Installation des dépendances
+        run: npm ci
+
+  lint-space-invader:
+    name: Lint Space Invader
+    needs: setup-space-invader
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Installation
+        run: npm ci
+      - name: Linting du code
+        run: |
+          npx eslint src/ts
+          echo "### Rapport de Linting 🎨" >> $GITHUB_STEP_SUMMARY
+          echo "L'analyse du code est terminée." >> $GITHUB_STEP_SUMMARY
+
+  audit-space-invader:
+    name: Audit Space Invader
+    needs: setup-space-invader
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Installation
+        run: npm ci
+      - name: Audit de sécurité
+        run: |
+          npm audit --audit-level=high && echo "::notice::Audit de sécurité réussi" || (echo "::error::Audit de sécurité échoué" && exit 1)
+          echo "### Rapport d'Audit 🛡️" >> $GITHUB_STEP_SUMMARY
+          echo "Audit terminé. Vérifiez les logs pour les détails." >> $GITHUB_STEP_SUMMARY
+
+  test-space-invader:
+    name: Tests Space Invader
+    needs: [lint-space-invader, audit-space-invader]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Installation
+        run: npm ci
+      - name: Lancer les tests
+        run: |
+          if npm run tests; then
+            echo "::notice::Tests unitaires réussis"
+            echo "### Résultats des Tests ✅" >> $GITHUB_STEP_SUMMARY
+            echo "Les tests unitaires ont été exécutés avec succès." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "::error::Les tests unitaires ont échoué"
+            echo "### Résultats des Tests ❌" >> $GITHUB_STEP_SUMMARY
+            echo "Les tests unitaires ont échoué. Vérifiez les logs." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+  test-fonctionnel-space-invader:
+    name: Tests Fonctionnels Space Invader
+    needs: [lint-space-invader, audit-space-invader]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Installation
+        run: npm ci
+      - name: Lancer les tests fonctionnels
+        run: |
+          echo "### Tests Fonctionnels 🧪" >> $GITHUB_STEP_SUMMARY
+          echo "Les tests fonctionnels sont en cours d'exécution..." >> $GITHUB_STEP_SUMMARY
+          if npm run | grep -qE "^\s+test:functional"; then
+            if npm run test:functional; then
+              echo "::notice::Tests fonctionnels réussis"
+              echo "Tests fonctionnels terminés avec succès." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "::error::Les tests fonctionnels ont échoué"
+              echo "Tests fonctionnels en échec. Vérifiez les logs." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          else
+            echo "::warning::Aucun script npm 'test:functional' trouvé dans package.json"
+            echo "Aucun script 'test:functional' configuré (job non bloquant)." >> $GITHUB_STEP_SUMMARY
+          fi
+  resume-tests-space-invader:
+    name: Résumé des Tests Space Invader
+    if: always()
+    needs:
+      [
+        test-space-invader,
+        test-fonctionnel-space-invader,
+        audit-space-invader,
+        lint-space-invader,
+        setup-space-invader,
+        build-space-invader,
+      ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Space_Invaders
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Résumé des tests
+        run: |
+          echo "### Résumé Final des Tests 🏁" >> $GITHUB_STEP_SUMMARY
+          echo "- Audit : ${{ needs.audit-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Lint : ${{ needs.lint-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests Unitaires : ${{ needs.test-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests Fonctionnels : ${{ needs.test-fonctionnel-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Build : ${{ needs.build-space-invader.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "Vérifiez les étapes précédentes pour les détails des résultats." >> $GITHUB_STEP_SUMMARY
+
+  build-space-invader:
+    name: Build & Push Docker Image
+    needs: [test-space-invader, test-fonctionnel-space-invader] # On attend que les tests passent
+    if: github.event_name != 'pull_request'
+    environment: "github-pages"
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérification des secrets Docker
+        run: |
+          if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+            echo "::error title=Configuration Docker manquante,file=.github/workflows/space_invader..yml,line=1::Ajoute secrets.DOCKER_USERNAME et secrets.DOCKER_PASSWORD dans l'environment 'github-pages'."
+            exit 1
+          fi
+          echo "::notice title=Configuration Docker::Variables Docker détectées."
+
+      - name: Diagnostic Docker (sans secret)
+        run: |
+          echo "Docker user détecté: $DOCKER_USERNAME"
+          if [ -n "$DOCKER_PASSWORD" ]; then
+            echo "Docker password détecté: OUI"
+          else
+            echo "Docker password détecté: NON"
+          fi
+          docker --version
+
+      - name: Connexion au registre
+        run: |
+          DOCKER_USERNAME_CLEAN="$(printf '%s' "$DOCKER_USERNAME" | tr -d '\r\n')"
+          DOCKER_PASSWORD_CLEAN="$(printf '%s' "$DOCKER_PASSWORD" | tr -d '\r\n')"
+          echo "::notice title=Diagnostic credentials::username_length=${#DOCKER_USERNAME_CLEAN}, token_length=${#DOCKER_PASSWORD_CLEAN}"
+          if ! printf '%s' "$DOCKER_PASSWORD_CLEAN" | docker login -u "$DOCKER_USERNAME_CLEAN" --password-stdin; then
+            echo "::error title=Échec authentification Docker Hub,file=.github/workflows/space_invader..yml,line=1::Vérifie secrets.DOCKER_USERNAME et remplace secrets.DOCKER_PASSWORD par un Access Token Docker Hub valide."
+            exit 1
+          fi
+
+      - name: Build de l'image 🐳
+        run: |
+          docker build -t "$DOCKER_USERNAME"/space-invaders:latest ./Space_Invaders
+
+      - name: Push de l'image 🚀
+        run: |
+          docker push "$DOCKER_USERNAME"/space-invaders:latest

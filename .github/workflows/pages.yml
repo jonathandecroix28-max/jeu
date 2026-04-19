@@ -1,0 +1,155 @@
+name: Deploiement Plateforme Jeux
+
+on:
+    push:
+        branches:
+            - "**"
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
+
+jobs:
+    validate-keep-white-space:
+        name: Validate Keep White Space
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./Keep_White_Space
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "lts/*"
+            - name: Install dependencies
+              run: npm ci
+            - name: Lint
+              run: npm run lint
+            - name: Unit tests
+              run: npm run test:unit
+            - name: Start test server
+              run: |
+                  npx http-server -p 3630 -c-1 . &
+                  npx wait-on http://localhost:3630
+            - name: E2E tests
+              run: npm run test:e2e
+
+    validate-space-invaders:
+        name: Validate Space Invaders
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./Space_Invaders
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "lts/*"
+            - name: Install dependencies
+              run: npm ci
+            - name: Lint
+              run: npx eslint src/ts
+            - name: Security audit
+              run: npm audit --audit-level=high
+            - name: Unit tests
+              run: npm run tests
+            - name: Functional tests
+              run: npm run test:functional
+
+    artifact-keep-white-space:
+        name: Artifact Keep White Space
+        runs-on: ubuntu-latest
+        needs: [validate-keep-white-space]
+        steps:
+            - uses: actions/checkout@v4
+            - name: Prepare Keep White Space artifact
+              run: |
+                  rm -rf out
+                  mkdir -p out/keep-white-space
+                  cp Keep_White_Space/index.html Keep_White_Space/main.js Keep_White_Space/logic.js out/keep-white-space/
+            - name: Upload Keep White Space artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: keep-white-space-static
+                  path: out/keep-white-space
+
+    artifact-space-invaders:
+        name: Artifact Space Invaders
+        runs-on: ubuntu-latest
+        needs: [validate-space-invaders]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "lts/*"
+            - name: Build Space Invaders
+              working-directory: ./Space_Invaders
+              run: |
+                  npm ci
+                  npm run build
+            - name: Prepare Space Invaders artifact
+              run: |
+                  rm -rf out
+                  mkdir -p out/space-invaders
+                  cp -R Space_Invaders/build/* out/space-invaders/
+            - name: Upload Space Invaders artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: space-invaders-static
+                  path: out/space-invaders
+
+    deploy-pages:
+        name: Deploy GitHub Pages
+        runs-on: ubuntu-latest
+        if: github.event_name != 'pull_request'
+        needs: [artifact-keep-white-space, artifact-space-invaders]
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+            - name: Download Keep White Space artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: keep-white-space-static
+                  path: site/keep-white-space
+            - name: Download Space Invaders artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: space-invaders-static
+                  path: site/space-invaders
+            - name: Prepare hub
+              run: |
+                  cp front/index.html front/style.css front/script.js site/
+                  if [ -d front/img ]; then
+                    cp -R front/img site/img
+                  fi
+            - name: Deploy GitHub Pages
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: site
+                  branch: gh-pages
+                  commit-message: "deploy(platform): ${{ github.sha }}"
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+    push-hub-dockerhub:
+        name: Push Hub image to Docker Hub
+        runs-on: ubuntu-latest
+        environment: "github-pages"
+        if: github.event_name != 'pull_request'
+        needs: [artifact-keep-white-space, artifact-space-invaders]
+        env:
+            DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v4
+            - name: Verify Docker secrets
+              run: |
+                  if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+                    echo "::error::Missing Docker secrets (DOCKER_USERNAME / DOCKER_PASSWORD)"
+                    exit 1
+                  fi
+            - name: Login Docker Hub
+              run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            - name: Build Hub image
+              run: docker build -t "$DOCKER_USERNAME"/jeux-videops-hub:latest ./front
+            - name: Push Hub image
+              run: docker push "$DOCKER_USERNAME"/jeux-videops-hub:latest

@@ -1,0 +1,164 @@
+name: Tests Keep White Space
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  installation-dependances:
+    name: Installation dépendances + Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Installation des dépendances (npm)
+        run: npm ci
+
+      - name: Audit de sécurité des dépendances
+        run: |
+          echo "## Résumé audit de sécurité Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm audit
+          echo "::notice title=Audit de sécurité::Audit des dépendances terminé avec succès"
+
+  lint:
+    name: Lint du projet au format Google
+    runs-on: ubuntu-latest
+    needs: installation-dependances
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Installation des dépendances (npm)
+        run: npm ci
+
+      - name: Lint
+        run: |
+          echo "## Résumé lint Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm run lint
+          echo "::notice title=Lint JS::Lint Keep White Space terminé avec succès"
+
+  tests:
+    name: Tests unitaires et E2E
+    runs-on: ubuntu-latest
+    needs: [installation-dependances, lint]
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Installation des dépendances (npm)
+        run: npm ci
+
+      - name: Tests Unitaires
+        run: |
+          echo "## Résumé tests unitaires Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm run test:unit
+          echo "::notice title=Tests Unitaires::Tests unitaires Keep White Space terminés avec succès"
+
+      - name: Lancer le serveur de test
+        run: |
+          npx http-server -p 3630 -c-1 . &
+          npx wait-on http://localhost:3630
+
+      - name: Tests E2E
+        run: |
+          echo "## Résumé tests E2E Keep White Space" >> $GITHUB_STEP_SUMMARY
+          npm run test:e2e
+          echo "::notice title=Tests E2E::Tests E2E Keep White Space terminés avec succès"
+
+  upload-image:
+    name: Build et upload de l'image Docker
+    runs-on: ubuntu-latest
+    needs: tests
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image Docker Keep White Space
+        run: docker build -t keep-white-space .
+
+      - name: Export image Docker comme artefact
+        run: docker save keep-white-space -o keep-white-space.tar
+
+      - name: Lister les fichiers après docker save
+        working-directory: ./Keep_White_Space
+        run: ls -al
+
+      - name: Upload artefact image
+        uses: actions/upload-artifact@v4
+        with:
+          name: keep-white-space-image
+          path: Keep_White_Space/keep-white-space.tar
+
+  push-image-dockerhub:
+    name: Push image Keep White Space sur Docker Hub
+    environment: "github-pages"
+    runs-on: ubuntu-latest
+    needs: tests
+    if: github.event_name != 'pull_request'
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    defaults:
+      run:
+        working-directory: ./Keep_White_Space
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérification des secrets Docker
+        run: |
+          if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+            echo "::error::Secrets Docker manquants (DOCKER_USERNAME / DOCKER_PASSWORD)"
+            exit 1
+          fi
+
+      - name: Connexion Docker Hub
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build image Docker Keep White Space
+        run: docker build -t "$DOCKER_USERNAME"/keep-white-space:latest .
+
+      - name: Push image Docker Keep White Space
+        run: docker push "$DOCKER_USERNAME"/keep-white-space:latest
+
+      - name: Résumé global Keep White Space
+        if: always()
+        run: |
+          {
+            echo "## Bilan global Keep White Space"
+            echo ""
+            echo "- Audit de sécurité : terminé (voir job 'Installation dépendances + Audit')"
+            echo "- Lint JS : terminé (voir job 'Lint du projet au format Google')"
+            echo "- Tests unitaires : terminés (voir job 'Tests unitaires et E2E')"
+            echo "- Tests E2E : terminés (voir job 'Tests unitaires et E2E')"
+            echo "- Hub GitHub Pages : déployé via le workflow pages.yml"
+          } >> $GITHUB_STEP_SUMMARY

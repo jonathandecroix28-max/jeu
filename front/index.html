@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Double Ton Salaire</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="bigTitle">DOUBLE TON SALAIRE</h1>
+
+    <label class="checkbox">
+      <input type="checkbox" id="acceptTerms">
+      J'accepte les conditions
+    </label>
+
+    <div class="terms-actions">
+      <button id="openModal">Voir les conditions</button>
+    </div>
+
+    <div id="terms-modal" class="modal" aria-hidden="true" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Conditions Générales d'Utilisation</h2>
+          <button id="closeModal" class="modal-close" aria-label="Fermer les conditions" title="Fermer">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+          <p><strong>Article 1 - Objet</strong><br>
+            Le présent document définit les règles d'utilisation du jeu "Double Ton Salaire". Toute participation
+            implique une acceptation totale, implicite et irreversible des présentes conditions, même en cas de
+            non-lecture.</p>
+
+          <p><strong>Article 2 - Participation</strong><br>
+            Le jeu est ouvert à toute personne disposant d'un salaire réel, fictif ou hypothétique, et capable
+            d'accepter des conditions potentiellement incompréhensibles.</p>
+
+          <p><strong>Article 3 - Définition du gain</strong><br>
+            Le "double salaire" correspond a une valeur variable, non garantie, recalculée en permanence selon des
+            paramètres arbitraires pouvant entrainer une valeur nulle.</p>
+
+          <p><strong>Article 4 - Conditions de gain</strong></p>
+          <ul>
+            <li>Gagner selon des règles non communiquées.</li>
+            <li>Fournir une preuve validée par une autorité non existante.</li>
+            <li>Faire une demande entre 02h17 et 02h19 un jour ferié non reconnu.</li>
+            <li>Être présent à un lieu communiqué apres validation définitive.</li>
+          </ul>
+
+          <p><strong>Article 5 - Réclamations</strong><br>
+            Toute demande doit être rédigée en latin ou equivalent, envoyée à une adresse susceptible de changer sans
+            notification, et accompagnée de documents prouvant l'existence du participant et l'absence de doute.</p>
+
+          <p><strong>Article 6 - Delais</strong><br>
+            Le traitement des demandes peut varier entre 48 heures et une durée indeterminee.</p>
+
+          <p><strong>Article 7 - Responsabilité</strong><br>
+            L'organisateur ne pourra être tenu responsable en cas de non-versement du gain, de confusion ou de
+            compréhension excessive des règles.</p>
+
+          <p><strong>Article 8 - Décision finale</strong><br>
+            Toute décision est laissée a l'entière discrétion de l'organisateur ou de toute entité designée par
+            celui-ci, y compris aucune.</p>
+
+          <hr class="hrPolicy">
+        </div>
+      </div>
+    </div>
+
+    <section class="games-section">
+      <h3>Choisis ton jeu</h3>
+      <div class="games-grid">
+        <article class="game-card game-card-primary">
+          <div class="game-card-content">
+            <h4>Keep White Space</h4>
+            <p>Un jeu nerveux et minimaliste à lancer directement depuis le hub.</p>
+            <button class="game-play-button" data-game="1">Jouer</button>
+          </div>
+        </article>
+
+        <article class="game-card game-card-secondary">
+          <div class="game-card-content">
+            <h4>Space Invaders</h4>
+            <p>Un second défi spatial avec un rythme différent et plus de tension.</p>
+            <button class="game-play-button" data-game="2">Jouer</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
