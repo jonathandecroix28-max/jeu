@@ -65,7 +65,7 @@
 - [Linting avec ESLint](https://eslint.org/)
 
 
-## Autheurs 
+## Auteurs 
 
 - Jonathan
 - Cyprien
